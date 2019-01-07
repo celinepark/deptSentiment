@@ -17,7 +17,7 @@ def main():
             metrics = [filename]
             with open(args.path + filename, 'r') as f:
                 text = f.read()
-                metrics.append(textstat.text_standard(text, float_output=True))
+                metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
             writer = csv.writer(outf)
             writer.writerow(metrics)
     
