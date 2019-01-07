@@ -27,7 +27,19 @@ def punctuationMetric(sentenceList):
     
     return ratio
         
-
+def secondPerson(blob):
+    secondPronouns = ["you", "yourself", "yourselves", "your", "yours"]
+    secondCount = 0
+    pronounCount = 0
+    text = blob.words
+    tags = blob.tags
+    for i in range(len(text)):
+        if text[i] in second_pronouns:
+            secondCount += 1
+            pronounCount += 1
+        else if tags[i][1].startswith("PRP"):
+            pronounCount += 1
+    return secondCount / pronounCount
 
 def main():
     parser = argparse.ArgumentParser(description="calculate some metrics for college cs department webpages")
@@ -47,6 +59,9 @@ def main():
                 
                 punctRatio = punctuationMetric(blob.sentences)
                 metrics.append(punctRatio) # ratio of exclamation points to end punctuation
+
+                secondPerRatio = secondPerson(blob)
+                metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
             writer = csv.writer(outf)
             writer.writerow(metrics)
     
