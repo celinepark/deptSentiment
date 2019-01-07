@@ -44,6 +44,9 @@ def main():
                 text = f.read()
                 blob = TextBlob(text) # blob.words and blob.sentences gives an iterable
                 metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
+                
+                punctRatio = punctuationMetric(blob.sentences)
+                metrics.append(punctRatio) # ratio of exclamation points to end punctuation
             writer = csv.writer(outf)
             writer.writerow(metrics)
     
