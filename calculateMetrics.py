@@ -41,6 +41,25 @@ def secondPerson(blob):
             pronounCount += 1
     return secondCount / pronounCount
 
+def polarityMetric(text):
+    """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
+        otherwise returns the average (negative) polarity
+    """
+    polarity = 0
+    sentenceCount = 0
+    ratio = 0
+
+    for sentence in text.sentences:
+        value = sentence.polarity 
+        if value < 0:
+            polarity += value
+            sentenceCount += 1
+    
+    if sentenceCount != 0:
+        ratio = polarity/sentenceCount
+    
+    return ratio
+
 def main():
     parser = argparse.ArgumentParser(description="calculate some metrics for college cs department webpages")
     parser.add_argument("path", help="a directory containing text files of website contents")
@@ -55,6 +74,7 @@ def main():
             with open(args.path + filename, 'r') as f:
                 text = f.read()
                 blob = TextBlob(text) # blob.words and blob.sentences gives an iterable
+
                 metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
                 
                 punctRatio = punctuationMetric(blob.sentences)
@@ -62,6 +82,9 @@ def main():
 
                 secondPerRatio = secondPerson(blob)
                 metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
+
+                polarityRatio = polarityMetric(blob)
+                metrics.append(polarityRatio) # average NEGATIVE polarity
             writer = csv.writer(outf)
             writer.writerow(metrics)
     
