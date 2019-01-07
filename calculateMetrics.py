@@ -3,6 +3,7 @@ import csv
 import os
 import string
 import textstat
+from textblob import TextBlob
 
 def main():
     parser = argparse.ArgumentParser(description="calculate some metrics for college cs department webpages")
@@ -17,6 +18,7 @@ def main():
             metrics = [filename]
             with open(args.path + filename, 'r') as f:
                 text = f.read()
+                blob = TextBlob(text) # blob.words and blob.sentences gives an iterable
                 metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
             writer = csv.writer(outf)
             writer.writerow(metrics)
