@@ -50,7 +50,7 @@ def polarityMetric(text):
     ratio = 0
 
     for sentence in text.sentences:
-        value = sentence.polarity 
+        value = sentence.sentiment.polarity 
         if value < 0:
             polarity += value
             sentenceCount += 1
