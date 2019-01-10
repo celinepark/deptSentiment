@@ -37,7 +37,7 @@ def secondPerson(blob):
         if text[i] in second_pronouns:
             secondCount += 1
             pronounCount += 1
-        else if tags[i][1].startswith("PRP"):
+        elif tags[i][1].startswith("PRP"):
             pronounCount += 1
     return secondCount / pronounCount
 
