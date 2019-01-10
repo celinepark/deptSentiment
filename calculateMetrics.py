@@ -34,7 +34,7 @@ def secondPerson(blob):
     text = blob.words
     tags = blob.tags
     for i in range(len(text)):
-        if text[i] in second_pronouns:
+        if text[i] in secondPronouns:
             secondCount += 1
             pronounCount += 1
         elif tags[i][1].startswith("PRP"):
