@@ -33,13 +33,17 @@ def secondPerson(blob):
     pronounCount = 0
     text = blob.words
     tags = blob.tags
+    ratio = 0
     for i in range(len(text)):
         if text[i] in secondPronouns:
             secondCount += 1
             pronounCount += 1
         elif tags[i][1].startswith("PRP"):
             pronounCount += 1
-    return secondCount / pronounCount
+    if pronounCount != 0:
+        ratio = secondCount / pronounCount
+    
+    return ratio
 
 def polarityMetric(text):
     """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
