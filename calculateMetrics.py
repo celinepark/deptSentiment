@@ -5,7 +5,7 @@ import string
 import textstat
 from textblob import TextBlob
 
-def polarityMetric(text):
+def polarityMetric(blob):
     """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
         otherwise returns the average (negative) polarity
     """
@@ -13,7 +13,7 @@ def polarityMetric(text):
     sentenceCount = 0
     ratio = 0
 
-    for sentence in text.sentences:
+    for sentence in blob.sentences:
         value = sentence.sentiment.polarity 
         if value < 0:
             polarity += value
@@ -24,8 +24,8 @@ def polarityMetric(text):
     
     return ratio
 
-def punctuationMetric(sentenceList):
-    """ Takes in a TextBlob sentence list, returns the ratio of exclamation points to
+def punctuationMetric(blob):
+    """ Takes in a TextBlob, returns the ratio of exclamation points to
         total end punctuation
     """
     punctCount = 0
@@ -33,7 +33,7 @@ def punctuationMetric(sentenceList):
     punctList = ['.', '!', '?']
     ratio = 0
 
-    for sentence in sentenceList:
+    for sentence in blob.sentences:
         # grab last character (should be punctuation)
         punct = sentence[-1]
         if punct in punctList:
@@ -45,8 +45,13 @@ def punctuationMetric(sentenceList):
         ratio = exclamationCount/punctCount
     
     return ratio
+
+def readabilityMetric(blob):
         
 def secondPersonMetric(blob):
+    """
+    takes a textblob object and returns the ratio of second person pronouns to all pronouns
+    """
     secondPronouns = ["you", "yourself", "yourselves", "your", "yours"]
     secondCount = 0
     pronounCount = 0
@@ -81,7 +86,7 @@ def main():
 
                 metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
                 
-                punctRatio = punctuationMetric(blob.sentences)
+                punctRatio = punctuationMetric(blob)
                 metrics.append(punctRatio) # ratio of exclamation points to end punctuation
 
                 secondPerRatio = secondPersonMetric(blob)
