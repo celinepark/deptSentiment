@@ -22,8 +22,11 @@ def genderMetric(blob):
         MP += text.count(pronoun)
     for pronoun in F_PRONOUNS:
         FP += text.count(pronoun)
-    
-    return 1 - (abs(MP - FP) / (MP + FP))
+
+    if MP + FP == 0:
+        return 1
+    else:
+        return 1 - (abs(MP - FP) / (MP + FP))
 
 def polarityMetric(blob):
     """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
@@ -68,17 +71,23 @@ def punctuationMetric(blob):
 
 def readabilityMetric(blob):
     """
-    takes a textblob object and returns the readability score concensus across several readability metrics
+    takes a textblob object and returns the readability score consensus across several readability metrics
 
     removes proper nouns to control for the effect of long names on these metrics, which typically use word length (either by characters or syllables) as a factor, which we theorize could bias them against texts with unusually high density of names from certain cultures
     """
     text = "" # this will be built sentence by sentence
     sentences = blob.sentences
+    END_PUNCT = ".?,;!"
     for sentence in sentences:
         wordList = sentence.words
         for tag in sentence.tags:
             if tag[1] == "NNP": # NNP = proper noun
-                wordList.remove(tag[0])
+                if tag[0][-1] not in END_PUNCT: # deal with words that have end punct attached in original sentence
+                    wordList.remove(tag[0])
+                else: 
+                    print(sentence.tags)
+                    print(tag[0])
+                    wordList.remove(tag[0][:len(tag[0])-1])
         text += " ".join(wordList) + sentence[-1] + " " # rejoin words, add on end punctuation, plus a space to separate from next sentence
 
     return textstat.text_standard(text, float_output=True)
