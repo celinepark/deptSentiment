@@ -5,6 +5,25 @@ import string
 import textstat
 from textblob import TextBlob
 
+def polarityMetric(text):
+    """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
+        otherwise returns the average (negative) polarity
+    """
+    polarity = 0
+    sentenceCount = 0
+    ratio = 0
+
+    for sentence in text.sentences:
+        value = sentence.sentiment.polarity 
+        if value < 0:
+            polarity += value
+            sentenceCount += 1
+    
+    if sentenceCount != 0:
+        ratio = polarity/sentenceCount
+    
+    return ratio
+
 def punctuationMetric(sentenceList):
     """ Takes in a TextBlob sentence list, returns the ratio of exclamation points to
         total end punctuation
@@ -27,7 +46,7 @@ def punctuationMetric(sentenceList):
     
     return ratio
         
-def secondPerson(blob):
+def secondPersonMetric(blob):
     secondPronouns = ["you", "yourself", "yourselves", "your", "yours"]
     secondCount = 0
     pronounCount = 0
@@ -42,25 +61,6 @@ def secondPerson(blob):
             pronounCount += 1
     if pronounCount != 0:
         ratio = secondCount / pronounCount
-    
-    return ratio
-
-def polarityMetric(text):
-    """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
-        otherwise returns the average (negative) polarity
-    """
-    polarity = 0
-    sentenceCount = 0
-    ratio = 0
-
-    for sentence in text.sentences:
-        value = sentence.sentiment.polarity 
-        if value < 0:
-            polarity += value
-            sentenceCount += 1
-    
-    if sentenceCount != 0:
-        ratio = polarity/sentenceCount
     
     return ratio
 
@@ -84,7 +84,7 @@ def main():
                 punctRatio = punctuationMetric(blob.sentences)
                 metrics.append(punctRatio) # ratio of exclamation points to end punctuation
 
-                secondPerRatio = secondPerson(blob)
+                secondPerRatio = secondPersonMetric(blob)
                 metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
 
                 polarityRatio = polarityMetric(blob)
