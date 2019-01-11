@@ -47,6 +47,22 @@ def punctuationMetric(blob):
     return ratio
 
 def readabilityMetric(blob):
+    """
+    takes a textblob object and returns the readability score concensus across several readability metrics
+
+    removes proper nouns to control for the effect of long names on these metrics, which typically use word length (either by characters or syllables) as a factor, which we theorize could bias them against texts with unusually high density of names from certain cultures
+    """
+    text = "" # this will be built sentence by sentence
+    sentences = blob.sentences
+    for sentence in sentences:
+        wordList = sentence.words
+        for tag in sentence.tags:
+            if tag[1] == "NNP": # NNP = proper noun
+                wordList.remove(tag[0])
+        text += " ".join(wordList) + sentence[-1] + " " # rejoin words, add on end punctuation, plus a space to separate from next sentence
+
+    return textstat.text_standard(text, float_output=True)
+
         
 def secondPersonMetric(blob):
     """
@@ -84,7 +100,8 @@ def main():
                 text = f.read()
                 blob = TextBlob(text) # blob.words and blob.sentences gives an iterable
 
-                metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
+                readingLevel = readabilityMetric(blob)
+                metrics.append(readingLevel) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
                 
                 punctRatio = punctuationMetric(blob)
                 metrics.append(punctRatio) # ratio of exclamation points to end punctuation
