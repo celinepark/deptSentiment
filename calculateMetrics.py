@@ -15,7 +15,8 @@ def genderMetric(blob):
     M_PRONOUNS = ["him", "himself", "his"]
     F_PRONOUNS = ["she", "herself", "her", "hers"]
     
-    MP, FP = 0
+    MP = 0
+    FP = 0
     text = blob.words
     for pronoun in M_PRONOUNS:
         MP += text.count(pronoun)
