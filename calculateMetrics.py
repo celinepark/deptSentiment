@@ -24,6 +24,25 @@ def polarityMetric(blob):
     
     return ratio
 
+def genderMetric(blob):
+    """
+    takes a textblob object, returns a score representing how balanced gender pronoun usage is.
+
+    score calculated by formula 1 - (|MP - FP|/(MP + FP)), where MP and FP stand for masculine and feminine pronouns, respectively.
+    the score is designed to be high (up to 1) if pronoun usage is completely even, and low (down to 0) if pronoun usage is very skewed in either direction.
+    """
+    M_PRONOUNS = ["him", "himself", "his"]
+    F_PRONOUNS = ["she", "herself", "her", "hers"]
+    
+    MP, FP = 0
+    text = blob.words
+    for pronoun in M_PRONOUNS:
+        MP += text.count(pronoun)
+    for pronoun in F_PRONOUNS:
+        FP += text.count(pronoun)
+    
+    return 1 - (abs(MP - FP) / (MP + FP))
+
 def punctuationMetric(blob):
     """ Takes in a TextBlob, returns the ratio of exclamation points to
         total end punctuation
@@ -68,14 +87,14 @@ def secondPersonMetric(blob):
     """
     takes a textblob object and returns the ratio of second person pronouns to all pronouns
     """
-    secondPronouns = ["you", "yourself", "yourselves", "your", "yours"]
+    SECOND_PRONOUNS = ["you", "yourself", "yourselves", "your", "yours"]
     secondCount = 0
     pronounCount = 0
     text = blob.words
     tags = blob.tags
     ratio = 0
     for i in range(len(text)):
-        if text[i] in secondPronouns:
+        if text[i] in SECOND_PRONOUNS:
             secondCount += 1
             pronounCount += 1
         elif tags[i][1].startswith("PRP"):
