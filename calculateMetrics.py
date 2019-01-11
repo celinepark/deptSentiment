@@ -5,25 +5,6 @@ import string
 import textstat
 from textblob import TextBlob
 
-def polarityMetric(blob):
-    """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
-        otherwise returns the average (negative) polarity
-    """
-    polarity = 0
-    sentenceCount = 0
-    ratio = 0
-
-    for sentence in blob.sentences:
-        value = sentence.sentiment.polarity 
-        if value < 0:
-            polarity += value
-            sentenceCount += 1
-    
-    if sentenceCount != 0:
-        ratio = polarity/sentenceCount
-    
-    return ratio
-
 def genderMetric(blob):
     """
     takes a textblob object, returns a score representing how balanced gender pronoun usage is.
@@ -42,6 +23,25 @@ def genderMetric(blob):
         FP += text.count(pronoun)
     
     return 1 - (abs(MP - FP) / (MP + FP))
+
+def polarityMetric(blob):
+    """ Takes in text as TextBlob object, returns 0 if polarity is positive for each sentence, 
+        otherwise returns the average (negative) polarity
+    """
+    polarity = 0
+    sentenceCount = 0
+    ratio = 0
+
+    for sentence in blob.sentences:
+        value = sentence.sentiment.polarity 
+        if value < 0:
+            polarity += value
+            sentenceCount += 1
+    
+    if sentenceCount != 0:
+        ratio = polarity/sentenceCount
+    
+    return ratio
 
 def punctuationMetric(blob):
     """ Takes in a TextBlob, returns the ratio of exclamation points to
@@ -119,17 +119,20 @@ def main():
                 text = f.read()
                 blob = TextBlob(text) # blob.words and blob.sentences gives an iterable
 
-                readingLevel = readabilityMetric(blob)
-                metrics.append(readingLevel) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
-                
-                punctRatio = punctuationMetric(blob)
-                metrics.append(punctRatio) # ratio of exclamation points to end punctuation
-
-                secondPerRatio = secondPersonMetric(blob)
-                metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
+                genderPronounRatio = genderMetric(blob)
+                metrics.append(genderPronounRatio)
 
                 polarityRatio = polarityMetric(blob)
                 metrics.append(polarityRatio) # average NEGATIVE polarity
+
+                punctRatio = punctuationMetric(blob)
+                metrics.append(punctRatio) # ratio of exclamation points to end punctuation
+
+                readingLevel = readabilityMetric(blob)
+                metrics.append(readingLevel) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
+                
+                secondPerRatio = secondPersonMetric(blob)
+                metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
             writer = csv.writer(outf)
             writer.writerow(metrics)
     
