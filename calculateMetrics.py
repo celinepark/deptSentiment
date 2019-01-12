@@ -69,30 +69,6 @@ def punctuationMetric(blob):
     
     return ratio
 
-def readabilityMetric(blob):
-    """
-    takes a textblob object and returns the readability score consensus across several readability metrics
-
-    removes proper nouns to control for the effect of long names on these metrics, which typically use word length (either by characters or syllables) as a factor, which we theorize could bias them against texts with unusually high density of names from certain cultures
-    """
-    text = "" # this will be built sentence by sentence
-    sentences = blob.sentences
-    END_PUNCT = ".?,;!"
-    for sentence in sentences:
-        wordList = sentence.words
-        for tag in sentence.tags:
-            if tag[1] == "NNP": # NNP = proper noun
-                if tag[0][-1] not in END_PUNCT: # deal with words that have end punct attached in original sentence
-                    wordList.remove(tag[0])
-                else: 
-                    print(sentence.tags)
-                    print(tag[0])
-                    wordList.remove(tag[0][:len(tag[0])-1])
-        text += " ".join(wordList) + sentence[-1] + " " # rejoin words, add on end punctuation, plus a space to separate from next sentence
-
-    return textstat.text_standard(text, float_output=True)
-
-        
 def secondPersonMetric(blob):
     """
     takes a textblob object and returns the ratio of second person pronouns to all pronouns
@@ -129,6 +105,8 @@ def main():
                 text = f.read()
                 blob = TextBlob(text) # blob.words and blob.sentences gives an iterable
 
+                metrics.append(textstat.text_standard(text, float_output=True)) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
+                
                 genderPronounRatio = genderMetric(blob)
                 metrics.append(genderPronounRatio)
 
@@ -138,9 +116,6 @@ def main():
                 punctRatio = punctuationMetric(blob)
                 metrics.append(punctRatio) # ratio of exclamation points to end punctuation
 
-                readingLevel = readabilityMetric(blob)
-                metrics.append(readingLevel) # aggregated/concensus score from a variety of readability metrics, generally based on word & sentence length
-                
                 secondPerRatio = secondPersonMetric(blob)
                 metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
             writer = csv.writer(outf)
