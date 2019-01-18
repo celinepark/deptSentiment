@@ -90,6 +90,21 @@ def secondPersonMetric(blob):
     
     return ratio
 
+def welcomeMetric(blob):
+    """
+    takes a textblob and returns a binary metric of whether it contained any in the list of 
+    predetermined "welcoming" words
+    """
+    WELCOME_WORDS = ["support", "supported", "supporting", "welcome", "welcomed", "welcoming", "inclusive", "encourage", "encouraged", "encouraging", "embrace", "embraced", "embracing"]
+    welcomeCount = 0
+    text = blob.words
+    tags = blob.tags
+    for i in range(len(text)):
+        if text[i] in WELCOME_WORDS:
+            return 1
+    return 0
+    
+
 def main():
     parser = argparse.ArgumentParser(description="calculate some metrics for college cs department webpages")
     parser.add_argument("path", help="a directory containing text files of website contents")
