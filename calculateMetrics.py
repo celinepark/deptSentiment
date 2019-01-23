@@ -98,7 +98,6 @@ def welcomeMetric(blob):
     WELCOME_WORDS = ["support", "supported", "supporting", "welcome", "welcomed", "welcoming", "inclusive", "encourage", "encouraged", "encouraging", "embrace", "embraced", "embracing"]
     welcomeCount = 0
     text = blob.words
-    tags = blob.tags
     for i in range(len(text)):
         if text[i] in WELCOME_WORDS:
             return 1
@@ -133,6 +132,9 @@ def main():
 
                 secondPerRatio = secondPersonMetric(blob)
                 metrics.append(secondPerRatio) # ratio of second person pronouns to pronouns in total
+
+                welcomeBinary = welcomeMetric(blob)
+                metrics.append(welcomeBinary) # binary value for whether website contains welcoming words
             writer = csv.writer(outf)
             writer.writerow(metrics)
     
